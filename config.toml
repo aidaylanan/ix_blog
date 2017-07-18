@@ -1,4 +1,4 @@
-baseurl = "/"
+baseurl = "https://aida.netlify.com"
 relativeurls = true
 languageCode = "en-us"
 title = "A Hugo website"
