@@ -83,7 +83,12 @@ paint.plot = plot_ly(paintings, x = ~year_painting, y = ~adj_price, type = 'scat
                text = ~paste(artist),
                color = ~adj_price)
 x = list(title = "Year Painted"); y = list(title = "Selling Price (in millions)")
-paint.plot %>% layout(title = "Paintings", xaxis = x, yaxis = y)
+paint1 <- paint.plot %>% layout(title = "Paintings", xaxis = x, yaxis = y)
+
+htmlwidgets::saveWidget(paint1, file = "paint1.html", selfcontained = TRUE)
+```
+```{html}
+<iframe seamless src="~Documents/iX_Data_Science/blog2/paint1.html" width="100%" height="500"></iframe>
 ```
 
 ```{r}
