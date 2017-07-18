@@ -18,7 +18,7 @@ To learn more about the relationship between types of art and their selling pric
 ## Cleaning the Data
 
 This project couldn't be possible without the help of `dplyr`, `stringr`, `rvest` and `plotly`:
-```{r, echo = F}
+```{r, eval = F}
 library(dplyr)
 library(stringr)
 library(rvest)
