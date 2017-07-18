@@ -1,0 +1,101 @@
+---
+title: "Exploratory Data Analysis"
+author: "Aida Ylanan"
+date: '2017-07-17'
+slug: week-4-data-analysis
+tags: []
+categories: []
+---
+
+# Background
+Those who know me well know that on any given weekend, I will probably be at the museum. I usually come in as a visitor, but ever since I started working at the Hammer Museum last year, I've also become a part-time tour guide and researcher. Art history provides a unique and fascinating way to examine the past and historicize the present, as it allows us to ask questions like: what sorts of things matter to us? How have we learned to express ourselves over time? 
+I've been itching to find a way to connect my burgeoning interest in data science with my lifelong love of the arts, and art sales sit at an interesting intersection of the two. Art matters to us, and we pay a lot of money for it, but why? What sorts of art is valued most? These are some of the questions I asked myself, and I found Wikipedia lists to be a great resource for beginning the answers to these investigations. With regard to this project, I asked myself this central question:
+*Does art become more expensive with time?*
+
+# The Data 
+To learn more about the relationship between types of art and their selling prices, a natural place to look would be some sort of history of art sales. I ended up going with lists of the most expensive paintings and photographs ever sold, as reported on Wikipedia. The Wiki list format was great for quick data scraping, though some inconsistent formatting had to be corrected before analyses could begin. 
+
+## Cleaning the Data
+
+This project couldn't be possible without the help of `dplyr`, `stringr`, `rvest` and `plotly`:
+```{r, echo = F}
+library(dplyr)
+library(stringr)
+library(rvest)
+library(plotly)
+```
+
+### Paintings 
+The Wiki tables used for this assignment could be easily scraped using the html functions available from the `rvest` package:
+```{r}
+paintings.raw = read_html("https://en.wikipedia.org/wiki/List_of_most_expensive_paintings") %>% 
+  html_node("#mw-content-text > div > table") %>% html_table(trim = TRUE)
+
+paintings = paintings.raw %>% select(adj_price = `Adjusted price\n(in millions)`, orig_price = `Original price
+(in millions)`, painting = Painting, artist = Artist, year_painting = Year, date_sale = `Date of sale`, seller = Seller, buyer = Buyer)
+```
+
+Wiki tables are unfortunately not very rigorous in keeping their data in a consistent format; some quick data wrangling had to be done before we could start plotting: 
+```{r}
+paintings$adj_price = gsub("\\$", "", paintings$adj_price)
+paintings$adj_price = gsub("\\~", "", paintings$adj_price)
+paintings$adj_price = gsub("\\ ", "", paintings$adj_price)
+paintings$adj_price = gsub("\\+", "", paintings$adj_price)
+paintings$adj_price = paintings$adj_price %>% as.numeric()
+
+paintings$year_painting = paintings$year_painting %>% substr(1,4) %>% as.numeric()
+
+paintings$artist = gsub( ",.*$", "", paintings$artist ) #fix van gogh
+paintings$artist = gsub( " !.*$", "", paintings$artist)
+paintings$artist = gsub("Gogh", "van Gogh", paintings$artist)
+```
+
+### Photographs 
+
+The photograph process had a similar web scraping and data wrangling process:
+```{r}
+photos = read_html("https://en.wikipedia.org/wiki/List_of_most_expensive_photographs") %>% 
+  html_node("#mw-content-text > div > table") %>% html_table(trim = TRUE)
+
+photos$year = gsub("(?<=\\()[^()]*(?=\\))(*SKIP)(*F)|.", "", photos$Work, perl=T)
+photos$year[5] = photos$year[5] %>% substr(str_length(photos$year[5]) - 3, str_length(photos$year[5]))
+photos$year[c(7,16,20)] = photos$year[c(7,16,20)] %>% substr(1,4)
+photos$year[8] = photos$year[8] %>% substr(str_length(photos$year[8]) - 3, str_length(photos$year[8]))
+photos$year[21] = photos$year[21] %>% substr(str_length(photos$year[21]) - 3, str_length(photos$year[21]))
+photos$year = photos$year %>% as.numeric()
+
+photos$Price = gsub("\\$", "", photos$Price)
+photos$Price = gsub("\\,", "", photos$Price)
+photos$Price = photos$Price %>% as.numeric() / 1000000  # price in millions 
+
+photos$Artist = gsub("\\ \\&\\ ", "", photos$Artist)
+photos$Artist = sub('.*\\ ', '', photos$Artist)
+photos$Artist = gsub("GilbertGeorge", "Gilbert&George", photos$Artist)
+```
+
+# Plotting Data 
+
+`plotly` has great functionality when it comes to zooming in on plots and hovering over points for more information. I've included the names of each artist in the hover function. The zoom feature becomes particularly handy once we reach the 20th century and see more records of art being bought and sold.
+```{r}
+paint.plot = plot_ly(paintings, x = ~year_painting, y = ~adj_price, type = 'scatter',
+               mode = 'markers',
+               hoverinfo = 'text', 
+               text = ~paste(artist),
+               color = ~adj_price)
+x = list(title = "Year Painted"); y = list(title = "Selling Price (in millions)")
+paint.plot %>% layout(title = "Paintings", xaxis = x, yaxis = y)
+```
+
+```{r}
+photo.plot = plot_ly(photos, x = ~year, y = ~Price, type = 'scatter',
+               mode = 'markers',
+               hoverinfo = 'text', 
+               text = ~paste(Artist),
+               color = ~Price)
+x = list(title = "Year Photographed"); y = list(title = "Selling Price (in millions)")
+photo.plot %>% layout(title = "Photographs", xaxis = x, yaxis = y)
+```
+
+# Conclusion
+On the surface, it appears our plots tell us a quick and easy answer: no, these paintings do not become more expensive with age. A naive reading of these results would imply that paintings get cheaper with age. But an important caveat needs to be made, particularly regarding the data used to make this analysis. Though the most expensive paintings ever sold were not made that long ago, this does not necessarily imply that a painting made by a less well known artist, say, half a century ago, would be worth any more than art made from an artist from the 17th century. One shortcoming of this analysis is its inability to demonstrate the historical value an object accumulates over time. Older artifacts might not be sold on these sorts of objects because of the collective, humanitarian impulse to preserve older objects in places that better preserve posterity, like museums, than, say, someone's private collection.
+So this interesting plot is just that: an interesting plot. Perhaps something can be said of the commercial value of artists who gained their fame relatively recently (post-Impressionism and beyond) because their fame burgeoned around the time that many other aspects of western living became commercialized as well (I'm thinking 20th century). These questions and hypotheses only encourage more questions and more research... but this is a start! 
