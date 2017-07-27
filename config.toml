@@ -9,7 +9,7 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 
 [params]
     description          = "Aida's blog. Contents including, but not limited to: personal data science projects, posts of her favorite photographs."
-    navbarTitle          = "origin"
+    navbarTitle          = "Aida"
 
 
 [permalinks]
