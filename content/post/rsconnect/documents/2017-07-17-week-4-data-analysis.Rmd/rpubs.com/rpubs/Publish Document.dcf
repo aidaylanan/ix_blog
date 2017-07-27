@@ -1,0 +1,8 @@
+name: Publish Document
+title:
+account: rpubs
+server: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/292104/4ac9f46545e9464e874fa01af41f16aa
+bundleId: https://api.rpubs.com/api/v1/document/292104/4ac9f46545e9464e874fa01af41f16aa
+url: http://rpubs.com/aida/292104
+when: 1500386997.71973
