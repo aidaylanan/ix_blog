@@ -1,48 +1,44 @@
-baseurl = "https://aida.netlify.com"
-relativeurls = true
-languageCode = "en-us"
-title = "Aida's iX Blog"
-theme = "hugo-future-imperfect"
+baseurl = "https://www.aida.netlify.com"
+languageCode = "en"
+title = "Hugo Kiss theme"
+theme = "kiss"
+copyright = "&copy; <a href=\"https://github.com/ribice\">Emir Ribic</a> 2017"
+disqusShortname = "shortname"
 googleAnalytics = ""
-disqusShortname = ""
-ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
-
-[params]
-    description          = "Aida's blog. Contents including, but not limited to: personal data science projects, posts of her favorite photographs."
-    navbarTitle          = "Aida"
+# Number of posts per page
+Paginate = 5
+enableRobotsTXT = true 
 
 
-[permalinks]
-    post = "/:year/:month/:day/:slug/"
-    
-[params.intro]
-    header      = "thought repository"    
-    paragraph   = "Aida's blog of everything"
+[params.assets]
+customCSS = ["css/custom.css"]
 
-[[menu.main]]
-    name = "About"
-    url = "/about/"
-[[menu.main]]
-    name = "GitHub"
-    url = "https://github.com/aidaylanan"
-[[menu.main]]
-    name = "LinkedIn"
-    url = "https://linkedin.com/in/a1daylanan"
+[params.info]
+adsense = "" # Adsense ID (ID only, without ca-pub-)
+enableSocial = false # Adds OpenGraph and Twitter cards
+homeTitle = "" # Title for home page
+poweredby = true # Adds powered by Hugo and Kiss below Copyright section
 
+[params.opengraph.facebook]
+admins = [] # array of Facebook IDs
+appID = ""
+pageID = ""
 
+[params.opengraph.twitter]
+page = "" # Twitter Page username. If not set, params.social.twitter will be used.
 
-    # options for highlight.js (version, additional languages, and theme)
-    highlightjsVersion = "9.11.0"
-    highlightjsCDN = "//cdn.bootcss.com"
-    highlightjsLang = ["r", "yaml"]
-    highlightjsTheme = "github"
+[params.social]
 
-    MathJaxCDN = "//cdn.bootcss.com"
-    MathJaxVersion = "2.7.1"
+twitter = "ribicemir"
+github = "ribice"
+email = "ribice@gmail.com"
+linkedin = "ribice"
+facebook = "ribice"
+instagram = ""
+codepen = ""
 
-    [params.logo]
-    url = "logo.png"
-    width = 50
-    height = 50
-    alt = "Logo"
+[taxonomies]
+tag ="tags"
 
+[blackfriday]
+hrefTargetBlank = true
